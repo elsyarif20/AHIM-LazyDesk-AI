@@ -17,3 +17,25 @@ html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 20% 0%,
 #runButton:disabled,#saveKeyButton:disabled,#testKeyButton:disabled{opacity:.65;cursor:wait;transform:none}
 /* Upload controls: visible reset action, matching the existing AHIM visual system. */
 .upload-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}.reset-upload-button{border-color:rgba(255,140,120,.34);color:#ffb1a2;background:rgba(255,140,120,.07);font-weight:800;padding:10px 14px}.reset-upload-button:hover{border-color:rgba(255,140,120,.7);color:#ffd0c8;background:rgba(255,140,120,.12)}.upload-limit-note{font:9px 'DM Mono',monospace;color:#8197b2;letter-spacing:.2px}@media(max-width:560px){.upload-actions{align-items:stretch}.reset-upload-button{width:100%}.upload-limit-note{text-align:center;width:100%}}
+
+/* Structured AI output: readable headings, paragraphs, lists, and tables */
+.markdown-output{white-space:normal;line-height:1.75;color:#d9e4f2}
+.markdown-output h1,.markdown-output h2,.markdown-output h3,.markdown-output h4{line-height:1.35;letter-spacing:-.3px;color:#f0f6ff;margin:1.15em 0 .45em;font-weight:800}
+.markdown-output h1{font-size:21px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-top:0}
+.markdown-output h2{font-size:16px;color:var(--lime)}
+.markdown-output h3{font-size:14px;color:#a8dff0}
+.markdown-output p{margin:.45em 0 .9em;white-space:normal}
+.markdown-output ul,.markdown-output ol{padding-left:24px;margin:.45em 0 1em}
+.markdown-output li{padding-left:3px;margin:.28em 0;white-space:normal}
+.markdown-output li::marker{color:var(--lime)}
+.markdown-output strong{color:#fff;font-weight:800}
+.markdown-output em{color:#c3d5e8}
+.markdown-output code{font-family:'DM Mono',monospace;font-size:.9em;background:#081625;border:1px solid var(--line);border-radius:4px;padding:2px 4px}
+.markdown-output blockquote{border-left:3px solid var(--cyan);margin:12px 0;padding:8px 12px;color:#a9bed4;background:rgba(98,229,255,.04)}
+.markdown-output hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+.markdown-table-wrap{max-width:100%;overflow-x:auto;margin:12px 0 16px;border:1px solid var(--line);border-radius:8px}
+.markdown-output table{border-collapse:collapse;width:100%;font-size:11px;white-space:normal}
+.markdown-output th{background:#17365d;color:#fff;text-align:left;font-weight:800}
+.markdown-output th,.markdown-output td{padding:9px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top;min-width:90px}
+.markdown-output tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+.markdown-output tr:last-child td{border-bottom:0}
