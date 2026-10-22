@@ -102,12 +102,32 @@ function showPanel(panel) {
   ["emptyState","loadingState","resultState","errorState"].forEach(id => $(id).classList.toggle("hidden", id !== panel));
 }
 function taskPrompt() {
-  const type = $("taskType").value, extra = $("customPrompt").value.trim();
-  let task = "";
-  if (type === "meeting") task = "Format the output as meeting minutes with agenda, decisions, action items, and unresolved issues.";
-  if (type === "action") task = "Focus on actionable tasks only. Do not infer owners or deadlines.";
-  if (type === "rewrite") task = "Clean up and structure the content while preserving the original meaning.";
-  return `You are AHIM LazyDesk AI, a careful productivity assistant.\nProvide a concise summary, key decisions/dates, action items, and open questions. Never invent facts. Reply in the language of the source.\n${task}\n${extra ? "Additional user instruction: " + extra : ""}`;
+  const type = $("taskType").value;
+  const language = $("outputLanguage").value;
+  const extra = $("customPrompt").value.trim();
+
+  const languageRule = {
+    auto: "Use the same language as the source material. If the source contains multiple languages, use the dominant language.",
+    id: "Write the entire output in clear, natural Bahasa Indonesia.",
+    en: "Write the entire output in clear, natural English.",
+    ar: "اكتب الناتج كاملاً باللغة العربية الفصحى الواضحة والطبيعية."
+  }[language] || "Use the same language as the source material.";
+
+  const tasks = {
+    general: "TASK: Produce a useful, evidence-based summary. Start with the central message, then organize the main points, important names/dates/numbers, decisions, action items, and unresolved questions when present. Keep material details; do not force sections that have no supporting information.",
+    meeting: "TASK: Create meeting minutes using only the source. Include meeting title/date/participants only when stated; agenda or topics discussed; key discussion points; decisions; action items with owner and deadline only if explicitly stated; and unresolved issues. Mark missing information as 'Not stated in source' rather than guessing.",
+    action: "TASK: Extract actionable tasks only. Use a table with Task, Owner, Deadline, and Evidence/Context. Include only tasks supported by the source. Write 'Not specified' for an absent owner or deadline. Do not add a general summary unless needed to clarify an action.",
+    rewrite: "TASK: Rewrite and improve the source text for clarity, grammar, flow, and structure while preserving its meaning, facts, tone, names, dates, figures, and intent. Do not summarize, add new claims, or remove important details. Return the rewritten text first; add notes only if necessary.",
+    extract: "TASK: Extract key points and decisions. Separate (1) key facts/points, (2) explicit decisions, (3) figures, dates, names or requirements, and (4) unresolved questions. Do not label a suggestion as a decision. Include short source evidence or section references where possible."
+  };
+  return [
+    "You are AHIM LazyDesk AI, a precise professional assistant. Your job is to complete the selected task, not to produce a generic answer.",
+    languageRule,
+    tasks[type] || tasks.general,
+    "SOURCE FIDELITY RULES: Treat the provided source as the authority. Do not invent, assume, silently correct, or fill gaps with outside knowledge. Preserve important facts, qualifications, units, dates, names, and relationships. Clearly label any inference and only make one when the user asks for it. If the source is incomplete or ambiguous, state exactly what is missing. Avoid generic filler and repeated conclusions. Match the requested level of detail; prefer specific, usable output over vague advice.",
+    "Before answering, silently check that the output follows the selected task and language, covers the source's important details, and contains no unsupported facts. Do not describe this internal check.",
+    extra ? "ADDITIONAL USER INSTRUCTIONS (follow unless they conflict with source fidelity): " + extra : ""
+  ].filter(Boolean).join("\\n\\n");
 }
 async function runTask() {
   const text = $("sourceText").value.trim();
