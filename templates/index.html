@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>AHIM LazyDesk AI — Work less on the busywork</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">A<span>✳</span></div>
+        <div><div class="brand-name">AHIM<span>.</span></div><div class="brand-sub">LAZYDESK AI</div></div>
+      </div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="studio"><span class="nav-icon">✦</span> AI Studio <span class="nav-pill">01</span></button>
+      <button class="nav-item" data-view="history"><span class="nav-icon">◷</span> Recent activity</button>
+      <button class="nav-item" data-view="library"><span class="nav-icon">▤</span> Document library</button>
+      <div class="side-label side-label-gap">PREFERENCES</div>
+      <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span> AI settings</button>
+      <div class="sidebar-bottom">
+        <div class="local-card"><div class="local-dot"></div><div><strong>Privacy-aware AI</strong><span>Choose where your data goes</span></div></div>
+        <div class="profile"><div class="avatar">A</div><div class="profile-text"><strong>AHIM LABS</strong><span>Personal workspace</span></div><span class="profile-more">···</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">AI Studio</strong></div>
+        <div class="top-actions"><div class="status-chip"><i></i><span id="engineStatus">AI engine ready</span></div><button class="icon-button" id="themeInfo" title="About">ⓘ</button></div>
+      </header>
+
+      <section class="view active-view" id="view-studio">
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-line"></span> PERSONAL PRODUCTIVITY / OPEN AI</div>
+            <h1>Work less on the<br><em>busywork.</em></h1>
+            <p>Turn long documents, messy notes, and meeting transcripts into clear summaries and next steps. You bring the context. AI handles the first pass.</p>
+            <div class="hero-foot"><span class="hero-tag">✳ SLOW AND STEADY</span><span class="hero-micro">HACKTOBERFEST · WEEK 3</span></div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="orb orb-one"></div><div class="orb orb-two"></div>
+            <div class="sloth-card"><div class="sloth-face">🦥</div><div class="sloth-caption">TAKE IT<br><b>EASY.</b></div><div class="sloth-spark">✳</div></div>
+            <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+            <div class="float-chip chip-a">✦ LESS BUSYWORK</div><div class="float-chip chip-b">AI / ON YOUR TERMS</div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="metric-top"><span>YOUR WORKFLOW</span><span class="metric-icon">↗</span></div><div class="metric-value">01 <small>/ INPUT</small></div><div class="metric-note">Paste or upload content</div></div>
+          <div class="metric"><div class="metric-top"><span>THE OUTPUT</span><span class="metric-icon">✧</span></div><div class="metric-value">02 <small>/ CLARITY</small></div><div class="metric-note">Summary + action items</div></div>
+          <div class="metric"><div class="metric-top"><span>AI ENGINE</span><span class="metric-icon">⌘</span></div><div class="metric-value" id="metricEngine">GEMMA <small>/ CLOUD</small></div><div class="metric-note">Ollama Cloud inference</div></div>
+          <div class="metric"><div class="metric-top"><span>YOUR CONTROL</span><span class="metric-icon">✓</span></div><div class="metric-value">YOU <small>/ REVIEW</small></div><div class="metric-note">Nothing acts without you</div></div>
+        </div>
+
+        <div class="section-heading"><div><span class="section-kicker">THE WORKSPACE</span><h2>Make a little progress.</h2></div><div class="heading-right">DESIGNED FOR YOUR FLOW <span>↘</span></div></div>
+        <div class="studio-grid">
+          <section class="panel input-panel">
+            <div class="panel-heading"><div><span class="panel-number">01 / INPUT</span><h3>Drop your thoughts.</h3></div><div class="panel-symbol">✎</div></div>
+            <div class="mode-tabs"><button class="mode-tab selected" data-mode="text">✦ Paste text</button><button class="mode-tab" data-mode="file">⇧ Upload file</button></div>
+            <div id="textMode">
+              <div class="input-label-row"><label for="sourceText">SOURCE TEXT</label><button type="button" class="text-button" id="clearInputButton">Clear text</button></div>
+              <textarea id="sourceText" maxlength="60000" placeholder="Tempel notulen rapat, pesan panjang, draf laporan, atau teks yang ingin dirapikan…"></textarea>
+              <div class="text-meta"><span>Plain text · Maks. 60.000 karakter</span><span id="charCount">0 / 60.000</span></div>
+            </div>
+            <div id="fileMode" class="hidden">
+              <label>DOCUMENT DROP</label>
+              <label class="drop-zone" id="dropZone" for="fileInput"><span class="drop-icon">⇧</span><strong>Seret file ke sini atau klik untuk memilih</strong><span>PDF (maks. 200 halaman), DOCX, XLSX, CSV, TXT, gambar/screenshot · Maks. 100 MB</span><input id="fileInput" type="file" accept=".pdf,.docx,.xlsx,.xlsm,.csv,.txt,.md,.json,.log,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff"><span class="file-name" id="fileName">Belum ada file dipilih</span></label>
+              <p class="subtle-note" id="fileHelp">Gambar, screenshot, dan PDF scan dibaca oleh provider AI vision online. PDF maksimal 200 halaman per file.</p><div class="upload-actions"><button type="button" class="secondary-button reset-upload-button" id="resetUploadButton">↺ Reset Upload · Hapus File</button><span class="upload-limit-note">Maks. 200 halaman PDF · 100 MB</span></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label for="backend">AI ENGINE</label><select id="backend"><option value="ollama_cloud">Gemma 4 31B · Ollama Cloud</option><option value="openai">OpenAI Vision</option><option value="gemini">Google Gemini Vision</option><option value="demo">Demo preview · No AI</option></select></div>
+              <div class="form-group"><label for="taskType">JENIS TUGAS</label><select id="taskType"><option value="general">Ringkasan cerdas</option><option value="meeting">Notulen rapat</option><option value="action">Daftar tindak lanjut</option><option value="rewrite">Rapikan tulisan</option><option value="extract">Poin penting & keputusan</option></select></div>
+            </div>
+            <div class="form-row extra-options">
+              <div class="form-group"><label for="outputLanguage">BAHASA HASIL</label><select id="outputLanguage"><option value="auto">Ikuti bahasa sumber</option><option value="id">Bahasa Indonesia</option><option value="en">English</option><option value="ar">العربية</option></select></div>
+              <div class="form-group"><label for="customPrompt">INSTRUKSI TAMBAHAN <span>OPSIONAL</span></label><input id="customPrompt" type="text" placeholder="Misalnya: formal, singkat, maksimal 5 poin…"></div>
+            </div>
+            <button class="primary-button" id="runButton"><span>✦</span> Proses dengan Gemma <span class="button-arrow">↗</span></button>
+            <div class="privacy-note"><span>◈</span> Hasil AI perlu ditinjau. Konten yang diproses dikirim ke provider AI pilihanmu.</div>
+          </section>
+
+          <section class="panel output-panel">
+            <div class="panel-heading"><div><span class="panel-number">02 / OUTPUT</span><h3>Your clarity board.</h3></div><div class="output-live"><i></i> READY</div></div>
+            <div id="emptyState" class="empty-state"><div class="empty-illustration"><div class="empty-ring"></div><div class="empty-paper">✧</div><span class="empty-star star-one">✳</span><span class="empty-star star-two">✦</span></div><h3>Siap membantu pekerjaanmu.</h3><p>Tempel teks atau unggah dokumen, pilih jenis tugas, lalu proses dengan AI.</p><div class="empty-points"><span>✓ Ringkasan cepat</span><span>✓ Tindak lanjut jelas</span><span>✓ Kamu tetap memegang kendali</span></div></div>
+            <div id="loadingState" class="loading-state hidden"><div class="loader-orbit"><span></span></div><h3>Sedang memproses…</h3><p>AI sedang menyusun informasi. Dokumen panjang mungkin membutuhkan waktu lebih lama.</p><div class="loading-bar"><span></span></div></div>
+            <div id="resultState" class="result-state hidden"><div class="result-toolbar"><div><span class="panel-number">AI GENERATED DRAFT</span><div class="result-meta" id="resultMeta">Summary ready</div></div><button class="small-button" id="copyButton">Copy</button></div><article id="resultContent" class="markdown-output"></article><div class="result-actions"><button class="secondary-button" id="downloadButton">↓ Markdown</button><button class="secondary-button" id="exportWordButton">Word .docx</button><button class="secondary-button" id="exportPdfButton">PDF</button><button class="secondary-button" id="exportExcelButton">Excel .xlsx</button><button class="secondary-button" id="newButton">＋ New task</button></div></div>
+            <div id="errorState" class="error-state hidden"><div class="error-symbol">!</div><h3>Permintaan belum berhasil.</h3><p id="errorText"></p><button class="secondary-button" id="retryButton">Coba lagi</button><button class="text-button" id="openSettingsFromError" type="button">Buka pengaturan API key</button></div>
+          </section>
+        </div>
+        <div class="bottom-note"><span class="bottom-star">✳</span><div><strong>Slow is smooth. Smooth is fast.</strong><p>Let AI take the first pass. Keep human judgment in the loop.</p></div><span class="bottom-code">AHIM LABS / 001</span></div>
+      </section>
+
+      <section class="view simple-view" id="view-history"><div class="section-heading"><div><span class="section-kicker">YOUR ACTIVITY</span><h2>Recent activity.</h2></div></div><div class="panel full-panel"><div class="panel-heading"><div><span class="panel-number">LOCAL SESSION</span><h3>Your recent drafts.</h3></div><span class="history-count" id="historyCount">0 items</span></div><div id="historyList" class="history-list"><div class="empty-history">Your generated drafts will appear here during this browser session.</div></div><p class="subtle-note">History is held in this browser session only; it is not a persistent cloud database.</p></div></section>
+
+      <section class="view simple-view" id="view-library"><div class="section-heading"><div><span class="section-kicker">YOUR DOCUMENTS</span><h2>Document library.</h2></div></div><div class="panel full-panel"><div class="library-empty"><div class="library-icon">▤</div><h3>Keep your workflow light.</h3><p>Upload a document in AI Studio to process it. This starter version does not permanently store uploaded files.</p><button class="primary-button" id="goStudio">Open AI Studio ↗</button></div></div></section>
+
+      <section class="view simple-view" id="view-settings">
+        <div class="section-heading"><div><span class="section-kicker">CONFIGURATION</span><h2>AI settings.</h2></div></div>
+        <div class="settings-grid settings-grid-key">
+          <div class="panel settings-panel key-settings-panel">
+            <span class="panel-number">PRIMARY ENGINE</span>
+            <div class="form-group"><label for="settingsProvider">PROVIDER AI</label><select id="settingsProvider"><option value="ollama_cloud">Ollama Cloud / Gemma</option><option value="openai">OpenAI</option><option value="gemini">Google Gemini</option></select></div>
+            <h3 id="providerHeading">Gemma 4 31B · Ollama Cloud</h3>
+            <p>Pilih provider, masukkan API key, lalu uji koneksi. Key disimpan pada credential vault sistem. Key tidak ditampilkan kembali dan tidak ditulis ke source code.</p>
+            <div class="key-status" id="cloudStatus" role="status" aria-live="polite">Memeriksa konfigurasi…</div>
+            <div class="form-group key-input-group">
+              <label for="apiKeyInput">API KEY PROVIDER TERPILIH</label>
+              <input id="apiKeyInput" type="password" autocomplete="new-password" placeholder="Tempel API key provider di sini" spellcheck="false">
+              <p class="subtle-note">Key yang sudah tersimpan tidak ditampilkan kembali. Isi kolom ini hanya jika ingin mengganti key. Jangan bagikan key kepada siapa pun.</p>
+            </div>
+            <div class="key-actions">
+              <button class="primary-button" id="saveKeyButton" type="button">Simpan & Hubungkan ↗</button>
+              <button class="secondary-button" id="testKeyButton" type="button">Uji koneksi</button>
+              <button class="secondary-button danger-button" id="removeKeyButton" type="button">Hapus key</button>
+            </div>
+            <div class="key-feedback" id="keyFeedback" role="status" aria-live="polite"></div>
+            <p class="key-link-line">Belum punya API key? <a id="providerKeyLink" href="https://ollama.com/settings/keys" target="_blank" rel="noopener noreferrer">Buka halaman API key provider ↗</a></p>
+            <p class="subtle-note">Model API: <code id="cloudModel">gemma4:31b</code> · key tersimpan terpisah per provider · Penyimpanan aman melalui credential vault sistem.</p>
+          </div>
+          <div class="panel settings-panel">
+            <span class="panel-number">PRIVACY & SECURITY</span><h3>Key tetap di backend.</h3>
+            <p>Browser mengirim key ke backend lokal hanya saat kamu menekan Simpan & Hubungkan. Key disimpan menggunakan penyimpanan kredensial sistem, bukan di HTML, JavaScript, atau file proyek.</p>
+            <p>Konten yang kamu proses dikirim ke provider AI pilihanmu untuk inferensi. Jangan gunakan aplikasi lokal ini sebagai layanan publik multi-user tanpa autentikasi dan penyimpanan key terpisah untuk tiap akun.</p>
+            <div class="setting-status">CLOUD PROVIDER · SERVER-SIDE AUTH</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><span>AHIM LABS © 2026</span><span>OPEN-MODEL PRODUCTIVITY</span><span>REVIEW BEFORE YOU ACT ↗</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
