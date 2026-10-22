@@ -127,7 +127,7 @@ function taskPrompt() {
     "SOURCE FIDELITY RULES: Treat the provided source as the authority. Do not invent, assume, silently correct, or fill gaps with outside knowledge. Preserve important facts, qualifications, units, dates, names, and relationships. Clearly label any inference and only make one when the user asks for it. If the source is incomplete or ambiguous, state exactly what is missing. Avoid generic filler and repeated conclusions. Match the requested level of detail; prefer specific, usable output over vague advice.",
     "Before answering, silently check that the output follows the selected task and language, covers the source's important details, and contains no unsupported facts. Do not describe this internal check.",
     extra ? "ADDITIONAL USER INSTRUCTIONS (follow unless they conflict with source fidelity): " + extra : ""
-  ].filter(Boolean).join("\\n\\n");
+  ].filter(Boolean).join("\n\n");
 }
 async function runTask() {
   const text = $("sourceText").value.trim();
