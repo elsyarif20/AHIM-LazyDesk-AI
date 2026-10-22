@@ -98,6 +98,44 @@ $("backend").addEventListener("change", () => {
   $("metricEngine").innerHTML = labels[val] || labels.demo;
   $("engineStatus").textContent = ({ollama_cloud:"Ollama Cloud selected",openai:"OpenAI selected",gemini:"Google Gemini selected",demo:"Preview mode"})[val];
 });
+function escapeHtml(value) {
+  return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function renderInlineMarkdown(value) {
+  let safe = escapeHtml(value);
+  safe = safe.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/__(.+?)__/g,"<strong>$1</strong>");
+  safe = safe.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g,"<em>$1</em>");
+  safe = safe.replace(/\x60([^\x60]+)\x60/g,"<code>$1</code>");
+  return safe;
+}
+function renderMarkdown(source) {
+  const lines = String(source || "").replace(/\r\n?/g,"\n").split("\n");
+  const out = [];
+  let paragraph = [], list = [], listTag = "", table = [];
+  const flushP = () => { if (paragraph.length) { out.push("<p>"+renderInlineMarkdown(paragraph.join(" "))+"</p>"); paragraph=[]; } };
+  const flushL = () => { if (list.length) { out.push("<"+listTag+">"+list.map(x=>"<li>"+renderInlineMarkdown(x)+"</li>").join("")+"</"+listTag+">"); list=[]; listTag=""; } };
+  const flushT = () => {
+    if (table.length) {
+      const rows=table.filter(row=>!row.every(cell=>/^:?-{3,}:?$/.test(cell.replace(/\s/g,""))));
+      if(rows.length) out.push("<div class='markdown-table-wrap'><table>"+rows.map((row,i)=>"<tr>"+row.map(cell=>i===0?"<th>"+renderInlineMarkdown(cell)+"</th>":"<td>"+renderInlineMarkdown(cell)+"</td>").join("")+"</tr>").join("")+"</table></div>");
+      table=[];
+    }
+  };
+  for (const raw of lines) {
+    const line=raw.trim();
+    if(!line){flushP();flushL();flushT();continue;}
+    if(line.startsWith("|")&&line.endsWith("|")){flushP();flushL();table.push(line.slice(1,-1).split("|").map(x=>x.trim()));continue;}
+    flushT();
+    const h=line.match(/^(#{1,4})\s+(.+)$/);
+    if(h){flushP();flushL();const n=h[1].length;out.push("<h"+n+">"+renderInlineMarkdown(h[2].replace(/\s+#+$/,""))+"</h"+n+">");continue;}
+    const b=line.match(/^[-*+]\s+(.+)$/), n=line.match(/^\d+[.)]\s+(.+)$/);
+    if(b||n){flushP();const tag=n?"ol":"ul";if(listTag&&listTag!==tag)flushL();listTag=tag;list.push((b||n)[1]);continue;}
+    if(line.startsWith(">")){flushP();flushL();out.push("<blockquote>"+renderInlineMarkdown(line.replace(/^>\s?/,""))+"</blockquote>");continue;}
+    if(/^[-*_]{3,}$/.test(line)){flushP();flushL();out.push("<hr>");continue;}
+    flushL();paragraph.push(line);
+  }
+  flushP();flushL();flushT();return out.join("");
+}
 function showPanel(panel) {
   ["emptyState","loadingState","resultState","errorState"].forEach(id => $(id).classList.toggle("hidden", id !== panel));
 }
@@ -125,6 +163,7 @@ function taskPrompt() {
     languageRule,
     tasks[type] || tasks.general,
     "SOURCE FIDELITY RULES: Treat the provided source as the authority. Do not invent, assume, silently correct, or fill gaps with outside knowledge. Preserve important facts, qualifications, units, dates, names, and relationships. Clearly label any inference and only make one when the user asks for it. If the source is incomplete or ambiguous, state exactly what is missing. Avoid generic filler and repeated conclusions. Match the requested level of detail; prefer specific, usable output over vague advice.",
+    "FORMATTING RULES: Return clean, professional Markdown, not a wall of plain text. Use one clear # title, ## section headings, short readable paragraphs, and consistent bullet or numbered lists. Use Markdown tables when comparing records or presenting structured fields; do not force tables for ordinary prose. Keep heading hierarchy logical, remove redundant headings, avoid decorative symbols/emojis, and do not wrap the whole answer in a code block. For a rewrite task, preserve the source document structure when it is clear and improve it rather than converting everything into a summary.",
     "Before answering, silently check that the output follows the selected task and language, covers the source's important details, and contains no unsupported facts. Do not describe this internal check.",
     extra ? "ADDITIONAL USER INSTRUCTIONS (follow unless they conflict with source fidelity): " + extra : ""
   ].filter(Boolean).join("\n\n");
@@ -149,7 +188,7 @@ async function runTask() {
       throw err;
     }
     state.lastResult = data.result;
-    $("resultContent").textContent = data.result;
+    $("resultContent").innerHTML = renderMarkdown(data.result);
     $("resultMeta").textContent = `${(data.characters || 0).toLocaleString()} characters processed · ${(data.model || backend).toUpperCase()} · ${new Date().toLocaleTimeString()}`;
     showPanel("resultState");
     state.history.unshift({title: (text || (file && file.name) || "Untitled draft").replace(/\s+/g," ").slice(0,72), result:data.result, time:new Date().toLocaleString()});
@@ -220,7 +259,7 @@ function renderHistory() {
     const left = document.createElement("div"); const title = document.createElement("strong"); title.textContent = item.title || "Untitled";
     const sub = document.createElement("div"); sub.style.marginTop = "5px"; sub.textContent = "Click to reopen this draft";
     left.append(title,sub); const time = document.createElement("span"); time.textContent = item.time;
-    row.append(left,time); row.addEventListener("click", () => { state.lastResult=item.result; $("resultContent").textContent=item.result; $("resultMeta").textContent="Restored from this browser session"; showPanel("resultState"); switchView("studio"); });
+    row.append(left,time); row.addEventListener("click", () => { state.lastResult=item.result; $("resultContent").innerHTML=renderMarkdown(item.result); $("resultMeta").textContent="Restored from this browser session"; showPanel("resultState"); switchView("studio"); });
     list.appendChild(row);
   });
 }
